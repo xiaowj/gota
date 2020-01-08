@@ -77,7 +77,7 @@ func (e floatElement) String() string {
 	return fmt.Sprintf("%f", e.e)
 }
 
-func (e floatElement) Int() (int, error) {
+func (e floatElement) Int() (int64, error) {
 	if e.IsNA() {
 		return 0, fmt.Errorf("can't convert NaN to int")
 	}
@@ -88,7 +88,7 @@ func (e floatElement) Int() (int, error) {
 	if math.IsNaN(f) {
 		return 0, fmt.Errorf("can't convert NaN to int")
 	}
-	return int(f), nil
+	return int64(f), nil
 }
 
 func (e floatElement) Float() float64 {

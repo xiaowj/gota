@@ -23,6 +23,8 @@ func (e *stringElement) Set(value interface{}) {
 		}
 	case int:
 		e.e = strconv.Itoa(value.(int))
+	case int64:
+		e.e = strconv.FormatInt(value.(int64), 10)
 	case float64:
 		e.e = strconv.FormatFloat(value.(float64), 'f', 6, 64)
 	case bool:
@@ -73,11 +75,11 @@ func (e stringElement) String() string {
 	return string(e.e)
 }
 
-func (e stringElement) Int() (int, error) {
+func (e stringElement) Int() (int64, error) {
 	if e.IsNA() {
 		return 0, fmt.Errorf("can't convert NaN to int")
 	}
-	return strconv.Atoi(e.e)
+	return strconv.ParseInt(e.e, 10, 64)
 }
 
 func (e stringElement) Float() float64 {

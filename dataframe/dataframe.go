@@ -893,9 +893,9 @@ func LoadStructs(i interface{}, options ...LoadOption) DataFrame {
 
 			// Handle `hasHeader` option
 			if !cfg.hasHeader {
-				tmp := make([]interface{}, 1)
-				tmp[0] = fieldName
-				elements = append(tmp, elements...)
+				//tmp := make([]interface{}, 1)
+				//tmp[0] = fieldName
+				//elements = append(tmp, elements...)
 				fieldName = ""
 			}
 			columns = append(columns, series.New(elements, t, fieldName))
@@ -1827,7 +1827,12 @@ func parseSelectIndexes(l int, indexes SelectIndexes, colnames []string) ([]int,
 		}
 		switch s.Type() {
 		case series.Int:
-			return s.Int()
+			result, err := s.Int()
+			intResult := make([]int, len(result))
+			for i := range result {
+				intResult[i] = int(result[i])
+			}
+			return intResult, err
 		case series.Bool:
 			bools, err := s.Bool()
 			if err != nil {

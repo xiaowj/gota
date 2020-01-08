@@ -28,8 +28,8 @@ func (e *boolElement) Set(value interface{}) {
 			e.nan = true
 			return
 		}
-	case int:
-		switch value.(int) {
+	case int64:
+		switch value.(int64) {
 		case 1:
 			e.e = true
 		case 0:
@@ -99,7 +99,7 @@ func (e boolElement) String() string {
 	return "false"
 }
 
-func (e boolElement) Int() (int, error) {
+func (e boolElement) Int() (int64, error) {
 	if e.IsNA() {
 		return 0, fmt.Errorf("can't convert NaN to int")
 	}

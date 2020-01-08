@@ -48,7 +48,7 @@ type Element interface {
 	Copy() Element     // FIXME: Returning interface is a recipe for pain
 	Val() ElementValue // FIXME: Returning interface is a recipe for pain
 	String() string
-	Int() (int, error)
+	Int() (int64, error)
 	Float() float64
 	Bool() (bool, error)
 
@@ -170,6 +170,13 @@ func New(values interface{}, t Type, name string) Series {
 		}
 	case []int:
 		v := values.([]int)
+		l := len(v)
+		preAlloc(l)
+		for i := 0; i < l; i++ {
+			ret.elements.Elem(i).Set(v[i])
+		}
+	case []int64:
+		v := values.([]int64)
 		l := len(v)
 		preAlloc(l)
 		for i := 0; i < l; i++ {
@@ -502,8 +509,8 @@ func (s Series) Float() []float64 {
 
 // Int returns the elements of a Series as a []int or an error if the
 // transformation is not possible.
-func (s Series) Int() ([]int, error) {
-	ret := make([]int, s.Len())
+func (s Series) Int() ([]int64, error) {
+	ret := make([]int64, s.Len())
 	for i := 0; i < s.Len(); i++ {
 		e := s.elements.Elem(i)
 		val, err := e.Int()
@@ -601,7 +608,12 @@ func parseIndexes(l int, indexes Indexes) ([]int, error) {
 		}
 		switch s.t {
 		case Int:
-			return s.Int()
+			result, err := s.Int()
+			intResult := make([]int, len(result))
+			for i := range result {
+				intResult[i] = int(result[i])
+			}
+			return intResult, err
 		case Bool:
 			bools, err := s.Bool()
 			if err != nil {

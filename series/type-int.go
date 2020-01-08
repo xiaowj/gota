@@ -7,7 +7,7 @@ import (
 )
 
 type intElement struct {
-	e   int
+	e   int64
 	nan bool
 }
 
@@ -19,14 +19,16 @@ func (e *intElement) Set(value interface{}) {
 			e.nan = true
 			return
 		}
-		i, err := strconv.Atoi(value.(string))
+		i, err := strconv.ParseInt(value.(string), 10, 64)
 		if err != nil {
 			e.nan = true
 			return
 		}
 		e.e = i
 	case int:
-		e.e = int(value.(int))
+		e.e = int64(value.(int))
+	case int64:
+		e.e = int64(value.(int64))
 	case float64:
 		f := value.(float64)
 		if math.IsNaN(f) ||
@@ -35,7 +37,7 @@ func (e *intElement) Set(value interface{}) {
 			e.nan = true
 			return
 		}
-		e.e = int(f)
+		e.e = int64(f)
 	case bool:
 		b := value.(bool)
 		if b {
@@ -89,11 +91,11 @@ func (e intElement) String() string {
 	return fmt.Sprint(e.e)
 }
 
-func (e intElement) Int() (int, error) {
+func (e intElement) Int() (int64, error) {
 	if e.IsNA() {
 		return 0, fmt.Errorf("can't convert NaN to int")
 	}
-	return int(e.e), nil
+	return int64(e.e), nil
 }
 
 func (e intElement) Float() float64 {
