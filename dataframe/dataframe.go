@@ -5,6 +5,7 @@ package dataframe
 import (
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -13,7 +14,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/go-gota/gota/series"
+	"github.com/xiaowj/gota/series"
 )
 
 // DataFrame is a data structure designed for operating on table like data (Such
@@ -99,6 +100,21 @@ func (df DataFrame) Copy() DataFrame {
 // String implements the Stringer interface for DataFrame
 func (df DataFrame) String() (str string) {
 	return df.print(true, true, true, true, 10, 70, "DataFrame")
+}
+
+func (df DataFrame) Merge(df2 DataFrame) error {
+	if df.ncols != df2.ncols {
+		return errors.New("columns not match, can't merge")
+	}
+	for i := range df.columns {
+		if df.columns[i].Name != df2.columns[i].Name {
+			return errors.New("column name not match, can't merge")
+		}
+	}
+	for i := range df2.columns {
+		df.columns = append(df.columns, df2.columns[i])
+	}
+	return nil
 }
 
 func (df DataFrame) print(
