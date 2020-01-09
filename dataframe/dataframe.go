@@ -5,6 +5,7 @@ package dataframe
 import (
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -13,7 +14,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/go-gota/gota/series"
+	"github.com/xiaowj/gota/series"
 )
 
 // DataFrame is a data structure designed for operating on table like data (Such
@@ -105,12 +106,14 @@ func (df DataFrame) Merge(df2 DataFrame) error {
 	if df.ncols != df2.ncols {
 		return errors.New("columns not match, can't merge")
 	}
-	for i:= range df.columns {
-		if df.columns[i].Name != df2.columns[i].Name{
+	for i := range df.columns {
+		if df.columns[i].Name != df2.columns[i].Name {
 			return errors.New("column name not match, can't merge")
 		}
 	}
-	df.columns = append(df.columns, df2.columns)
+	for i := range df2.columns {
+		df.columns = append(df.columns, df2.columns[i])
+	}
 	return nil
 }
 
